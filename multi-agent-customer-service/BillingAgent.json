@@ -1,0 +1,167 @@
+{
+  "name": "BillingAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        0
+      ],
+      "id": "59222626-8efc-46e0-bb6c-98c220f56632",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "You are the Billing specialist for BrightDesk, an office furniture company. You handle questions about refunds, warranties, payments, and invoices.\n\nUse your billing knowledge base to look up accurate policy information before answering. Never invent policy details — always base answers on the knowledge base. Be clear and reassuring, since billing questions often involve money concerns.\n\nYou only handle billing, refunds, warranties, and payments. If a customer asks about products or reports a problem, note that it's outside your area."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "40ecf7d4-cd9e-4396-9154-468429651786",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "b7795116-ab73-49c0-9c15-d4abe45b6dfa",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YwSuiNOptlBtmpMQ",
+          "name": "OpenAI account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to look up BrightDesk's billing policies, including refunds, warranties, payment methods, and invoices. Search here to find accurate policy information before answering the customer's question.",
+        "documentId": {
+          "__rl": true,
+          "value": "1l_495BfYhIXZ2o5suPUZqdo-vnNATKYz6_gLTt0qGfI",
+          "mode": "list",
+          "cachedResultName": "BillingEx",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1l_495BfYhIXZ2o5suPUZqdo-vnNATKYz6_gLTt0qGfI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "גיליון1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1l_495BfYhIXZ2o5suPUZqdo-vnNATKYz6_gLTt0qGfI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        176
+      ],
+      "id": "6d15f61a-0b0b-48a1-96e7-4b6b9f97d827",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "g0svfFvPMUPPNlMd",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "BILLING SUB-AGENT\nAnswers refund, warranty & payment questions\nfrom the billing-policies knowledge base (Google Sheets).",
+        "height": 480,
+        "width": 704
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "b059749f-edf9-4986-97ee-a44d72699fe7",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f939af10-e7af-4189-99d5-3e17817a6b89",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b841f95498d3b48a5fcd832e4e741fe811275e87c53b729b900a5ec88b629438"
+  },
+  "nodeGroups": [],
+  "id": "QZCuo5NRNoxemu31",
+  "tags": []
+}

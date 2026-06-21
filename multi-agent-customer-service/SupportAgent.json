@@ -1,0 +1,200 @@
+{
+  "name": "SupportAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query_ }}",
+        "options": {
+          "systemMessage": "You are the Support specialist for BrightDesk, an office furniture company. You handle customer complaints, problems, damaged or defective items, and any issue that needs follow-up from the human team.\n\nWhen a customer reports a problem, acknowledge it with empathy, then log the issue as a support ticket so the human team can follow up. Always confirm to the customer that their issue has been logged and someone will get back to them.\n\nYou only handle complaints and problems. If a customer asks about products, prices, refunds, or billing, note that it's outside your area."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c868b82e-b374-45f9-8664-271ada1f72cf",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "2feb1f8d-b5f0-42c2-880a-fe2e1da3ca26",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YwSuiNOptlBtmpMQ",
+          "name": "OpenAI account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query_"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "6dd5df64-bad9-4177-997c-50311f954b5c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to log a customer's complaint or problem as a support ticket. Record the customer's full issue so the human team can follow up.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8YLFU0ICeinHlZbC9c31hnUM1gBTHftfzA20FJjbEo",
+          "mode": "list",
+          "cachedResultName": "tickets ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8YLFU0ICeinHlZbC9c31hnUM1gBTHftfzA20FJjbEo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "גיליון1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8YLFU0ICeinHlZbC9c31hnUM1gBTHftfzA20FJjbEo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Question": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Question', ``, 'string') }}",
+            "status": "pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Question",
+              "displayName": "Customer Question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        400,
+        192
+      ],
+      "id": "e6ebb41b-ad66-466d-9b6f-e6eebbf9157e",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "g0svfFvPMUPPNlMd",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "SUPPORT SUB-AGENT\nHandles complaints & damaged-item reports.\nLogs each issue as a support ticket (appends to tickets ) for human follow-up.",
+        "height": 496,
+        "width": 672
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -112
+      ],
+      "id": "1441af7f-c69f-4148-ab69-e8cc7685a5ae",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "6e6925ae-6e7b-414b-9065-1c0a4f623c1d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b841f95498d3b48a5fcd832e4e741fe811275e87c53b729b900a5ec88b629438"
+  },
+  "nodeGroups": [],
+  "id": "oeJw6ONOSU7rNMk9",
+  "tags": []
+}

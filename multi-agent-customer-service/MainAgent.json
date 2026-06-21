@@ -1,0 +1,310 @@
+{
+  "name": "MainAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d518b637-2cbe-4197-af9b-fe9f508f1294",
+      "name": "When chat message received",
+      "webhookId": "923a7cdc-6f8d-4e2d-9e37-ebf2d9da6819"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the main customer service coordinator for BrightDesk, an office furniture company. Your job is NOT to answer customer questions yourself. Your job is to understand what the customer needs and route them to the correct specialist.\n\nYou have these specialists available:\n- Sales Agent: handles questions about products, prices, features, shipping, and recommendations.\n- Support Agent: handles complaints, problems, damaged or defective items, and issues that need a ticket logged.\n- Billing Agent: handles questions about refunds, warranties, payments, and invoices.\n\nWhen a customer message arrives, decide which specialist is the best fit and delegate to them. Pass along the customer's question, then relay the specialist's answer back to the customer clearly.\n\nIf a message could fit more than one specialist, pick the most relevant one. If you genuinely cannot tell, ask the customer a brief clarifying question before routing."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1800acfe-ef22-431e-af59-fdc5b54886de",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        224
+      ],
+      "id": "74842631-2994-41d7-8f22-746c85d5c6c4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YwSuiNOptlBtmpMQ",
+          "name": "OpenAI account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        320,
+        224
+      ],
+      "id": "cf028b35-2c00-46d7-bb33-dd6fea0d6fdf",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to handle any customer question about BrightDesk products, prices, features, specifications, shipping, or product recommendations. Pass the customer's full question to it and return its answer to the customer.",
+        "workflowId": {
+          "__rl": true,
+          "value": "XvHqeYCOCf0UmDMd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/XvHqeYCOCf0UmDMd",
+          "cachedResultName": "My project — SalesAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        208
+      ],
+      "id": "5d7b287f-a907-4e3a-bff8-472a00b00086",
+      "name": "Call 'SalesAgent'"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool when a customer reports a complaint, problem, defective or damaged item, or any issue that needs follow-up from the human team. Pass the customer's full message to it.",
+        "workflowId": {
+          "__rl": true,
+          "value": "oeJw6ONOSU7rNMk9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/oeJw6ONOSU7rNMk9",
+          "cachedResultName": "My project — SupportAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query_": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query_', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "query_"
+          ],
+          "schema": [
+            {
+              "id": "query_",
+              "displayName": "query_",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        224
+      ],
+      "id": "a625420e-3130-449f-99ac-eed64889aa86",
+      "name": "Call 'SupportAgent'"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool when a customer asks about refunds, warranties, payments, invoices, or billing policies. Pass the customer's full message to it.",
+        "workflowId": {
+          "__rl": true,
+          "value": "QZCuo5NRNoxemu31",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/QZCuo5NRNoxemu31",
+          "cachedResultName": "My project — BillingAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        224
+      ],
+      "id": "5aacd845-a2cd-4015-84ce-4786ea884308",
+      "name": "Call 'BillingAgent'"
+    },
+    {
+      "parameters": {
+        "content": "MAIN AGENT (Orchestrator)\nReceives customer messages, holds conversation memory,\nand routes each one to the right specialist sub-agent.\nDoes not answer directly — it delegates.",
+        "height": 272,
+        "width": 688,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -128
+      ],
+      "id": "70878bc8-234f-4c73-b58f-80662a9512c0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\nROUTING TOOLS\nEach tool calls a specialist sub-agent (Sales / Support / Billing).\nThe agent picks which to call based on the tool descriptions.",
+        "height": 272,
+        "width": 1104
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        176
+      ],
+      "id": "04e578c8-9639-446c-bbc2-d4cf46b1dc93",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'SalesAgent'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'SupportAgent'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'BillingAgent'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7899a330-7de9-4be4-bfce-89454feb5430",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b841f95498d3b48a5fcd832e4e741fe811275e87c53b729b900a5ec88b629438"
+  },
+  "nodeGroups": [],
+  "id": "awQPv81IiiQjA2cP",
+  "tags": []
+}
