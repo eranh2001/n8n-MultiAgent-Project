@@ -1,2 +1,2 @@
-# n8n-Automation-Portfolio
-AI automation &amp; workflow projects built with n8n
+# n8n-Automation-Chatbot
+AI automation &amp; workflow multi agent projects built with n8n
